@@ -9,6 +9,7 @@
 </template>
 
 <template name="go">
+  {{#if currentUser}}
   <div class="list-group">
     <a class="list-group-item list-group-item-info" href="/create"><h2>Create A Crypo Stanta Event &raquo;</h2></a>
   </div>
@@ -42,51 +43,64 @@
     </div>
   </div>
   {{/if}}
-</template>
-
-<template name="signup">
-  <div class="jumbotron">
-    <h2>Please sign up or sign in.</h2>
-  </div>
+  {{else}}
+    {{> signup}}
+  {{/if}}
 </template>
 
 <template name="create">
+  {{#if currentUser}}
   {{> quickForm collection="Santa" fields="event" id="insertSantaForm" type="insert"}}
   {{#if santas}}
   <div class="panel panel-default">
     <div class="panel-heading">Crypto Santa Events You Have Created</div>
     <div class="list-group">
       {{#each santas}}
-        <a href="/santa/{{_id}}" class="list-group-item">{{event}}</a>
+        <div class="list-group-item"><a href="/santa/{{_id}}" class="col-lg-10">{{event}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Santa" _id=this._id beforeRemove=beforeRemove}}</div>
       {{/each}}
     </div>
   </div>
   {{/if}}
+  {{else}}
+    {{> signup}}
+  {{/if}}
 </template>
 
 <template name="santa">
+  {{#if currentUser}}
   {{> quickForm collection="Santa" fields="event" doc=this.santa id="updateSantaForm" type="update"}}
   {{> quickForm collection="Membership" fields="email" id="insertMembershipForm" type="insert"}}
   <div class="panel panel-default">
     <div class="panel-heading">Members</div>
     <ul class="list-group">
       {{#each members}}
-      <li class="list-group-item">{{email}}</li>
+      <li class="list-group-item {{accepted this}}">{{email}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</li>
       {{/each}}
     </ul>
   </div>
   <p><a class="btn btn-primary btn-lg" href="?start=YES" role="button">Start Crypto Santa!</a></p>
+  {{else}}
+    {{> signup}}
+  {{/if}}
 </template>
 
 <template name="accept">
-  <p><a class="btn btn-primary btn-lg" href="?accept=YES" role="button">Accept Invitation!</a></p>
+  {{#if currentUser}}
+    <p><a class="btn btn-primary btn-lg" href="?accept=YES" role="button">Accept Invitation!</a></p>
+  {{else}}
+    {{> signup}}
+  {{/if}}
 </template>
 
 <template name="member">
+  {{#if currentUser}}
   <div class="jumbotron">
     <h2>This Crypto Santa Event Has Not Started</h2>
     <p>When the organizer starts the event your Onion Wrapping instructions will be diplayed here</p>
   </div>
   <p>In the meantime, you can get your gift ready for Onion Wrapping. Make sure to have plenty of wrapping paper.</p>
+  {{else}}
+    {{> signup}}
+  {{/if}}
 </template>
 
