@@ -7,6 +7,9 @@ Meteor.startup(function () {
     },
     removeMemberships: function(santa) {
       Membership.remove({ santa: santa });
+    },
+    addRecipient: function(santaId, userId) {
+      Santa.update(santaId, {$push: {recipients: { $each: [userId], $position:0}}});
     }
   });
 });

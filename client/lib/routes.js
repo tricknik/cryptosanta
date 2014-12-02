@@ -56,6 +56,7 @@ Router.route('/invite/:_id', function() {
   if (Meteor.userId()) {
     var invite = Membership.findOne({_id: this.params._id});
     if ((invite.user == undefined) && (this.params.query.accept == "YES")) {
+      Meteor.call('addRecipient', invite.santa, Meteor.userId());
       Membership.update(this.params._id, {$set: {user: Meteor.userId()}});
       accepted = true;
     }
