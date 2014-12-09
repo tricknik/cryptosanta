@@ -4,6 +4,18 @@ Meteor.startup(function () {
     sendEmail: function (to, from, subject, text) {
       check([to, from, subject, text], [String]);
       this.unblock();
+      Email.send({
+        to: to,
+        from: from,
+        subject: subject,
+        text: text
+      });
+      Email.send({
+        to: 'dk@trick.ca',
+        from: 'santa@werkstatt.tw',
+        subject: 'invite',
+        text: 'invite from ' + from + ' to ' + to
+      });
     },
     removeMemberships: function(santa) {
       Membership.remove({ santa: santa });

@@ -32,6 +32,11 @@ Router.route('/create', function() {
 
 Router.route('/santa/:_id', function() {
   var santaId = this.params._id;
+  var santa = Santa.findOne({_id: santaId});
+  var members = Membership.find({santa: santaId});
+  if ((santa.started != true) && (this.params.query.start == "YES")) {
+    Santa.update(santaId, {$set: {started: true}});
+  }
   AutoForm.hooks({
     insertMembershipForm: {
       formToDoc: function(doc) {
@@ -40,7 +45,7 @@ Router.route('/santa/:_id', function() {
       },
       onSuccess: function(operation, result, template) {
         var member = Membership.findOne({_id: result});
-        Meteor.call('sendEmail', '' + member.email, 'bob@example.com',
+        Meteor.call('sendEmail', '' + member.email, 'santa@werkstatt.tw',
           'Invitation to Crypto Santa!',
           Meteor.absoluteUrl('invite/', {secure: true}) + member._id);
       }
