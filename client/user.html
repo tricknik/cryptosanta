@@ -74,11 +74,15 @@
     <div class="panel-heading">Members</div>
     <ul class="list-group">
       {{#each members}}
-      <li class="list-group-item {{accepted this}}">{{email}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</li>
+        <div class="list-group-item {{accepted this}}"><a href="/santa/{{_id}}" class="col-lg-10">{{email}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
       {{/each}}
     </ul>
   </div>
+    {{#if count members 3}}
   <p><a class="btn btn-primary btn-lg" href="?start=YES" role="button">Start Crypto Santa!</a></p>
+    {{else}}
+  <p><div class="btn btn-primary btn-lg disabled" role="button">Need at least 4 participants!</div></p>
+    {{/if}}
   {{else}}
     {{> signup}}
   {{/if}}

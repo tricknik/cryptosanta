@@ -39,7 +39,6 @@ body {
   .container {
     max-width: 730px;
     background: #fff;
-    opacity: 0.85;
   }
 }
 .container-narrow > hr {

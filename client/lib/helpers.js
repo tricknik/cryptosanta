@@ -1,8 +1,5 @@
 
 Template.go.helpers({
-  count: function(collection) {
-    return (collection) ? collection.count() : 0;
-  },
   santaName: function(santaId) {
     var santa = Santa.findOne({_id: santaId});
     return santa.event; 
@@ -22,4 +19,9 @@ Template.create.helpers({
       Santa.remove({ _id: id });
     };
   }
+});
+
+Handlebars.registerHelper('count', function (collection, min) {
+  min =  min | 0;
+  return (collection) ? Math.max(0, collection.count() - min) : 0;
 });
