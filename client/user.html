@@ -28,7 +28,7 @@
     <div class="panel-heading">Crypto Santa Events You Are Part Of</div>
     <div class="list-group">
       {{#each memberships}}
-        <a href="/member/{{santa}}" class="list-group-item">{{santaName santa}}</a>
+        <a href="/member/{{_id}}" class="list-group-item">{{santaName santa}}</a>
       {{/each}}
     </div>
   </div>
@@ -69,20 +69,24 @@
 <template name="santa">
   {{#if currentUser}}
   {{> quickForm collection="Santa" fields="event" doc=this.santa id="updateSantaForm" type="update"}}
-  {{> quickForm collection="Membership" fields="email" id="insertMembershipForm" type="insert"}}
-  <div class="panel panel-default">
-    <div class="panel-heading">Members</div>
-    <ul class="list-group">
-      {{#each members}}
-        <div class="list-group-item {{accepted this}}"><a href="/santa/{{_id}}" class="col-lg-10">{{email}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
-      {{/each}}
-    </ul>
-  </div>
-    {{#if count members 3}}
-  <p><a class="btn btn-primary btn-lg" href="?start=YES" role="button">Start Crypto Santa!</a></p>
+    {{#if santa.started}}
+    <div class="jumbotron"><h3>This Event has started and can no longer be modified.</h3></div>
     {{else}}
-  <p><div class="btn btn-primary btn-lg disabled" role="button">Need at least 4 participants!</div></p>
-    {{/if}}
+    {{> quickForm collection="Membership" fields="email" id="insertMembershipForm" type="insert"}}
+    <div class="panel panel-default">
+      <div class="panel-heading">Members</div>
+      <ul class="list-group">
+        {{#each members}}
+          <div class="list-group-item {{accepted this}}"><a href="/santa/{{_id}}" class="col-lg-10">{{email}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
+        {{/each}}
+      </ul>
+    </div>
+      {{#if minMembers santa._id}}
+    <p><a class="btn btn-primary btn-lg" href="?start=YES" role="button">Start Crypto Santa!</a></p>
+      {{else}}
+    <p><div class="btn btn-primary btn-lg disabled" role="button">Need at least 4 accepted participants!</div></p>
+      {{/if}}
+   {{/if}}
   {{else}}
     {{> signup}}
   {{/if}}
@@ -98,11 +102,16 @@
 
 <template name="member">
   {{#if currentUser}}
+    {{#if santa.started}}
+      <h1>Onion Wrapping Instructions</h1>
+      <h1>{{member.user}}</h1>
+    {{else}}
   <div class="jumbotron">
     <h2>This Crypto Santa Event Has Not Started</h2>
     <p>When the organizer starts the event your Onion Wrapping instructions will be diplayed here</p>
   </div>
   <p>In the meantime, you can get your gift ready for Onion Wrapping. Make sure to have plenty of wrapping paper.</p>
+    {{/if}}
   {{else}}
     {{> signup}}
   {{/if}}

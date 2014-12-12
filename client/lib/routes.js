@@ -35,7 +35,7 @@ Router.route('/santa/:_id', function() {
   var santa = Santa.findOne({_id: santaId});
   var members = Membership.find({santa: santaId});
   if ((santa.started != true) && (this.params.query.start == "YES")) {
-    Santa.update(santaId, {$set: {started: true}});
+    Meteor.call('startSanta', santaId);
   }
   AutoForm.hooks({
     insertMembershipForm: {
@@ -76,6 +76,7 @@ Router.route('/invite/:_id', function() {
 
 Router.route('/member/:_id', function() {
   var member = Membership.findOne({_id: this.params._id});
-  this.render('member', {data: member});
+  var santa = Santa.findOne({_id: member.santa});
+  this.render('member', {data: {member: member, santa: santa}});
 });
 

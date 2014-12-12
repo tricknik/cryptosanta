@@ -21,7 +21,12 @@ Template.create.helpers({
   }
 });
 
-Handlebars.registerHelper('count', function (collection, min) {
-  min =  min | 0;
-  return (collection) ? Math.max(0, collection.count() - min) : 0;
+Handlebars.registerHelper('count', function (collection) {
+  return (collection) ? collection.count() : 0;
+});
+
+Handlebars.registerHelper('minMembers', function (santaId) {
+  var collection = Membership.find({santa: santaId, user: {$gt: ''}});
+  console.log('haha ' + santaId + ' wow ' + collection.count());
+  return (collection) ? Math.max(0, collection.count() - 3) : 0;
 });
