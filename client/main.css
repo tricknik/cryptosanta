@@ -7,6 +7,10 @@ body {
   background-repeat: repeat;
 }
 
+h1, h2, h3, h4 {
+  font-family: 'Mountains of Christmas', cursive;
+}
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -48,11 +52,29 @@ body {
 /* Main marketing message and sign up button */
 .jumbotron {
   text-align: center;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid #5d489d;
+  color: #fff;
+  background: #d72b28;
 }
 .jumbotron .btn {
   padding: 14px 24px;
   font-size: 21px;
+  background: #5d489d;
+}
+
+.panel-heading {
+  border-bottom: solid 1px #d72b28;
+}
+
+.panel-title {
+  font-weight: bolder;
+  color: #d72b28;
+  text-align: center;
+  font-size: 21px;
+}
+
+.panel-body {
+  font-size: 15px;
 }
 
 /* Supporting marketing content */
