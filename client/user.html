@@ -103,13 +103,40 @@
 <template name="member">
   {{#if currentUser}}
     {{#if santa.started}}
-      <dl>
-      <dh>Onion Wrapping Instructions for {{name member._id}}</dh>
-      <dt>recipient</dt><dd>{{name member.onion.recipient}}</dd>
-      <dt>exit</dt><dd>{{name member.onion.exit}}</dd>
-      <dt>middle</dt><dd>{{name member.onion.middle}}</dd>
-      <dt>entry</dt><dd>{{name member.onion.entry}}</dd>
-      </dl>
+      <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-titlte">Onion Wrapping Instructions</h3></div>
+        <div class="panel-body">
+        <p>Your gift is for <strong>{{name member.onion.recipient}}</strong>, once your gift is ready, gift wrapped and labeled, you are ready to add the three layers of onion wrapping by following the instructions below</p>
+        <p>While it's nice to use attactive wrapping paper to wrap your gift, it's best to use newspaper or scrap paper for the other three laywers of wrapping</p>
+        <p>Please label each layer clearly</p>
+      </div>
+      <div class="list-group">
+      <div class="list-group-item"> 
+        <span class="badge">Your Gift</span>
+        <h4 class="list-group-item-heading">Recipient</h4>
+        <strong class="list-group-item-text">{{name member.onion.recipient}}</strong>
+        <p class="list-group-item-text">This is the person your gift is for. Wrap your present and label it for {{name member.onion.recipient}}</p>
+        </div>
+      <div class="list-group-item"> 
+        <span class="badge">Layer 1</span>
+        <h4 class="list-group-item-heading">Exit</h4>
+        <strong class="list-group-item-text">{{name member.onion.exit}}</strong>
+        <p class="list-group-item-text">This is the first layer of your onion wrapping. Re-wrap your wrapped present and label it for {{name member.onion.exit}}</p>
+      </div>
+      <div class="list-group-item"> 
+        <span class="badge">Layer 2</span>
+        <h4 class="list-group-item-heading">Middle</h4>
+        <strong class="list-group-item-text">{{name member.onion.middle}}</strong>
+        <p class="list-group-item-text">This is the second layer of your onion wrapping. Wrap again and label it for {{name member.onion.middle}}</p>
+      </div>
+      <div class="list-group-item"> 
+        <span class="badge">Layer 3</span>
+        <h4 class="list-group-item-heading">Exit</h4>
+        <strong class="list-group-item-text">{{name member.onion.exit}}</strong>
+        <p class="list-group-item-text">This final outer layer of your onion wrapping. Label it for {{name member.onion.exit}}. This is the person you will give the onion wrapped gift too at your Crypto Santa event. Be discrete.</p>
+      </div>
+      </div>
+      </div>
     {{else}}
   <div class="jumbotron">
     <h2>This Crypto Santa Event Has Not Started</h2>

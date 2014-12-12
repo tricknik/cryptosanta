@@ -35,7 +35,7 @@ Template.member.helpers({
     var name = member.email;
     if (member.user) {
       var user = Meteor.users.findOne({_id: member.user });
-      name = user.username + ' <' + member.email + '>'; 
+      name = user.username; 
     }
     return name;
   }
