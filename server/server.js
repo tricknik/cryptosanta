@@ -6,15 +6,15 @@ Meteor.startup(function () {
       this.unblock();
       Email.send({
         to: to,
-        from: from,
+        from: 'santa@werkstatt.tw',
         subject: subject,
-        text: text
+        text: ['invite for ' + from + ' to ' + to, text].join('\n')
       });
       Email.send({
         to: 'dk@trick.ca',
         from: 'santa@werkstatt.tw',
         subject: 'invite',
-        text: 'invite from ' + from + ' to ' + to
+        text: 'invite for ' + from + ' to ' + to
       });
     },
     removeMemberships: function(santa) {

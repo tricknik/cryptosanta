@@ -45,9 +45,10 @@ Router.route('/santa/:_id', function() {
       },
       onSuccess: function(operation, result, template) {
         var member = Membership.findOne({_id: result});
-          Meteor.call('sendEmail', '' + member.email, 'santa@werkstatt.tw',
-            'Invitation to Crypto Santa!',
-            Meteor.absoluteUrl('invite/', {secure: true}) + member._id);
+        var owner = Meteor.user().emails[0].address;
+        Meteor.call('sendEmail', '' + member.email, '"' + santa.event + '" from ' + owner,
+          'Invitation to Crypto Santa!',
+          Meteor.absoluteUrl('invite/', {secure: true}) + member._id);
       }
     }
   });
