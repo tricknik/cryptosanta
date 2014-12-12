@@ -77,7 +77,7 @@
       <div class="panel-heading">Members</div>
       <ul class="list-group">
         {{#each members}}
-          <div class="list-group-item {{accepted this}}"><a href="/santa/{{_id}}" class="col-lg-10">{{email}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
+          <div class="list-group-item {{accepted this}}"><p class="col-lg-10">{{name this}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
         {{/each}}
       </ul>
     </div>
@@ -103,8 +103,13 @@
 <template name="member">
   {{#if currentUser}}
     {{#if santa.started}}
-      <h1>Onion Wrapping Instructions</h1>
-      <h1>{{member.user}}</h1>
+      <dl>
+      <dh>Onion Wrapping Instructions for {{name member._id}}</dh>
+      <dt>recipient</dt><dd>{{name member.onion.recipient}}</dd>
+      <dt>exit</dt><dd>{{name member.onion.exit}}</dd>
+      <dt>middle</dt><dd>{{name member.onion.middle}}</dd>
+      <dt>entry</dt><dd>{{name member.onion.entry}}</dd>
+      </dl>
     {{else}}
   <div class="jumbotron">
     <h2>This Crypto Santa Event Has Not Started</h2>

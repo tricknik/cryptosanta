@@ -29,30 +29,46 @@ Meteor.startup(function () {
         recipient: [],
         entry: [],
         middle: [],
-        exit: []
+        exit: [],
+        extra: []
       }
-      members = Membership.find({santa: santaId});
+      var onions = {};
+      members = Membership.find({santa: santaId, user: {$gt: ''}});
       members.forEach(function(member) {
+        onions[member._id] = {};
         lists.recipient.push(member._id);
-        lists.entry.push(member._id);
-        lists.middle.push(member._id);
         lists.exit.push(member._id);
+        lists.middle.push(member._id);
+        lists.entry.push(member._id);
+        lists.extra.push(member._id);
       }); 
-      members.forEach(function(member) {
-        var onion = {};
-        var setNode = function(key, not) {
-          onion[key] = lists[key].shift();
-          if (onion[key] == not) {
-            lists[key].push(onion[key])
-            onion[key] = lists[key].shift();
+      var setNode = function(key, not) {
+        lists[key] = _.shuffle(lists[key]);
+        memberlist = lists[key].slice();
+        if (not) { 
+          lists[key] = _.shuffle(lists.extra).concat(lists[key]);
+        }
+        var getNext = function(memberId) {
+          var next = lists[key].pop();
+          while ((memberId == next) || ((not) && (onions[memberId][not] == next))) {
+            var u = next;
+            next = lists[key].pop();
+            lists[key].unshift(u);
           }
+          return next;
         };
-        setNode('recipient', member._id);
-        setNode('exit', onion.recipient);
-        setNode('middle', onion.exit);
-        setNode('entry', onion.middle);
-	Membership.update(member._id, {$set: {onion: onion}});
-        console.log(onion);
+        for (var i = memberlist.length; i > 0; i--) {
+          var id = memberlist[i -1];
+          var next = getNext(id);
+          onions[id][key] = next;
+        }
+      };
+      setNode('recipient');
+      setNode('exit', 'recipient');
+      setNode('middle', 'exit');
+      setNode('entry', 'middle');
+      members.forEach(function(member) {
+        Membership.update(member._id, {$set: {onion: onions[member._id]}});
       }); 
       Santa.update(santaId, {$set: {started: true}});
     }
