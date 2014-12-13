@@ -7,6 +7,12 @@ Template.go.helpers({
 });
 
 Template.santa.helpers({
+  isOwner: function(santa) {
+    return ((santa) && (santa.owner == Meteor.userId()));
+  }
+});
+
+Template.owner.helpers({
   accepted: function(member) {
     return (member.user == undefined) ? 'list-group-item-warning' : 'list-group-item-success';
   },
@@ -30,7 +36,7 @@ Template.create.helpers({
 });
 
 Template.member.helpers({
-  name: function(memberId) {
+  memberName: function (memberId) {
     var member = Membership.findOne({_id: memberId});
     var name = member.email;
     if (member.user) {
@@ -38,6 +44,13 @@ Template.member.helpers({
       name = user.username; 
     }
     return name;
+  }
+});
+
+Template.accept.helpers({
+  ownerName: function (ownerId) {
+    var user = Meteor.users.findOne({_id: ownerId});
+    return user.username;
   }
 });
 

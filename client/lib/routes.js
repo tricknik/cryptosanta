@@ -34,7 +34,7 @@ Router.route('/santa/:_id', function() {
   var santaId = this.params._id;
   var santa = Santa.findOne({_id: santaId});
   var members = Membership.find({santa: santaId});
-  if ((santa.started != true) && (this.params.query.start == "YES")) {
+  if ((santa) && (santa.started != true) && (this.params.query.start == "YES")) {
     Meteor.call('startSanta', santaId);
   }
   AutoForm.hooks({
@@ -44,6 +44,7 @@ Router.route('/santa/:_id', function() {
         return doc;
       },
       onSuccess: function(operation, result, template) {
+        var santa = Santa.findOne({_id: santaId});
         var member = Membership.findOne({_id: result});
         var owner = Meteor.user().emails[0].address;
         Meteor.call('sendEmail', '' + member.email, '"' + santa.event + '" from ' + owner,
@@ -52,8 +53,6 @@ Router.route('/santa/:_id', function() {
       }
     }
   });
-  var santa = Santa.findOne({_id: santaId});
-  var members = Membership.find({santa: santaId});
   this.render('santa', {data: {santa: santa, members: members}});
 });
 
@@ -61,7 +60,7 @@ Router.route('/invite/:_id', function() {
   var accepted = false;
   if (Meteor.userId()) {
     var invite = Membership.findOne({_id: this.params._id});
-    if ((invite.user == undefined) && (this.params.query.accept == "YES")) {
+    if ((invite) && (invite.user == undefined) && (this.params.query.accept == "YES")) {
       Meteor.call('addRecipient', invite.santa, Meteor.userId());
       Membership.update(this.params._id, {$set: {user: Meteor.userId()}});
       accepted = true;
@@ -69,14 +68,15 @@ Router.route('/invite/:_id', function() {
     if (accepted) {
       this.redirect('/start/');
     } else {
-      this.render('accept');
+      var santa = (invite) ? Santa.findOne({_id: invite.santa}) : {};
+      this.render('accept', {data: {santa: santa}});
     }
   }
 });
 
 Router.route('/member/:_id', function() {
   var member = Membership.findOne({_id: this.params._id});
-  var santa = Santa.findOne({_id: member.santa});
+  var santa = (member) ? Santa.findOne({_id: member.santa}) : {};
   this.render('member', {data: {member: member, santa: santa}});
 });
 

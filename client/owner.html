@@ -3,7 +3,7 @@
   <div class="panel">
     <div class="panel-heading"><h2 class="panel-title">Create Crypto Santa Events</h2></div>
   </div>
-  {{> quickForm collection="Santa" fields="event" id="insertSantaForm" type="insert"}}
+  {{> quickForm collection="Santa" fields="event, description, public" id="insertSantaForm" type="insert"}}
   {{#if santas}}
   <div class="panel">
     <div class="panel-heading"><h2 class="panel-title">Crypto Santa Events You Have Created</h2></div>
@@ -19,18 +19,19 @@
   {{/if}}
 </template>
 
-<template name="santa">
+<template name="owner">
   {{#if currentUser}}
+    {{#if santa.started}}
+      <div class="jumbotron">
+        <h2>Crypto Santa Started</h2>
+        <p class="lead"><strong>This event has already been started</strong></p>
+        <p>Everyone can see their onion wrapping instructions. No more people can be added. Have fun!</p>
+      </div>
+    {{else}}
   <div class="panel">
     <div class="panel-heading"><h2 class="panel-title">Manage Your Crypto Santa</h2></div>
   </div>
-  {{> quickForm collection="Santa" fields="event" doc=this.santa id="updateSantaForm" type="update"}}
-    {{#if santa.started}}
-      <div class="panel">
-        <div class="panel-heading"><h2 class="panel-title">Crypto Santa Started</h2></div>
-        <div class="panel-body"><p>This event has already been started, so everyone can see their onion wrapping instruuctions. No more people can be added. Have fun!</p></div>
-      </div>
-    {{else}}
+  {{> quickForm collection="Santa" fields="event, description, public" doc=this.santa id="updateSantaForm" type="update"}}
   <div class="panel">
     <div class="panel-heading"><h2 class="panel-title">Invite New Participants</h2></div>
   </div>
