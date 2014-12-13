@@ -10,12 +10,14 @@
 
 <template name="go">
   {{#if currentUser}}
-  <div class="list-group">
-    <a class="list-group-item list-group-item-info" href="/create"><h2>Create A Crypo Stanta Event &raquo;</h2></a>
-  </div>
+  <br>
+  <div class="jumbotron">
+    <p class="lead">Starting your own <strong>Crypto Santa</strong> is easy, just create an event and invite some pariticpants! Events you have already created, been invited to or are participating in are displayed below</p>
+    <p><a class="btn btn-primary btn-lg" href="/create" role="button">Create or manage a Crypto Santa event &raquo;</a></p>
+</div>
   {{#if count santas}}
-  <div class="panel panel-default">
-    <div class="panel-heading">Crypto Santa Events You Have Created</div>
+  <div class="panel">
+    <div class="panel-heading"><h2 class="panel-title">Crypto Santa Events You Have Created</h2></div>
     <div class="list-group">
       {{#each santas}}
         <a href="/santa/{{_id}}" class="list-group-item">{{event}}</a>
@@ -24,8 +26,8 @@
   </div>
   {{/if}}
   {{#if count memberships}}
-  <div class="panel panel-default">
-    <div class="panel-heading">Crypto Santa Events You Are Part Of</div>
+  <div class="panel">
+    <div class="panel-heading"><h2 class="panel-title">Crypto Santa Events You Are Part Of</h2></div>
     <div class="list-group">
       {{#each memberships}}
         <a href="/member/{{_id}}" class="list-group-item">{{santaName santa}}</a>
@@ -34,8 +36,8 @@
   </div>
   {{/if}}
   {{#if count invites}}
-  <div class="panel panel-default">
-    <div class="panel-heading">Crypto Santa Invites</div>
+  <div class="panel">
+    <div class="panel-heading"><h2 class="panel-title">Crypto Santa Invites</h2></div>
     <div class="list-group">
       {{#each invites}}
         <a href="/invite/{{_id}}" class="list-group-item">{{santaName santa}}</a>
@@ -50,13 +52,16 @@
 
 <template name="create">
   {{#if currentUser}}
+  <div class="panel">
+    <div class="panel-heading"><h2 class="panel-title">Create Crypto Santa Events</h2></div>
+  </div>
   {{> quickForm collection="Santa" fields="event" id="insertSantaForm" type="insert"}}
   {{#if santas}}
-  <div class="panel panel-default">
-    <div class="panel-heading">Crypto Santa Events You Have Created</div>
+  <div class="panel">
+    <div class="panel-heading"><h2 class="panel-title">Crypto Santa Events You Have Created</h2></div>
     <div class="list-group">
       {{#each santas}}
-        <div class="list-group-item"><a href="/santa/{{_id}}" class="col-lg-10">{{event}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Santa" _id=this._id beforeRemove=beforeRemove}}</div>
+        <a href="/santa/{{_id}}" class="list-group-item"><span class="col-lg-10">{{event}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Santa" _id=this._id beforeRemove=beforeRemove}}</a>
       {{/each}}
     </div>
   </div>
@@ -68,13 +73,22 @@
 
 <template name="santa">
   {{#if currentUser}}
+  <div class="panel">
+    <div class="panel-heading"><h2 class="panel-title">Manage Your Crypto Santa</h2></div>
+  </div>
   {{> quickForm collection="Santa" fields="event" doc=this.santa id="updateSantaForm" type="update"}}
     {{#if santa.started}}
-    <div class="jumbotron"><h3>This Event has started and can no longer be modified.</h3></div>
+      <div class="panel">
+        <div class="panel-heading"><h2 class="panel-title">Crypto Santa Started</h2></div>
+        <div class="panel-body"><p>This event has already been started, so everyone can see their onion wrapping instruuctions. No more people can be added. Have fun!</p></div>
+      </div>
     {{else}}
+  <div class="panel">
+    <div class="panel-heading"><h2 class="panel-title">Invite New Participants</h2></div>
+  </div>
     {{> quickForm collection="Membership" fields="email" id="insertMembershipForm" type="insert"}}
-    <div class="panel panel-default">
-      <div class="panel-heading">Members</div>
+    <div class="panel">
+      <div class="panel-heading"><h2 class="panel-title">Manage Participants</h2></div>
       <ul class="list-group">
         {{#each members}}
           <div class="list-group-item {{accepted this}}"><p class="col-lg-10">{{name this}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
@@ -82,7 +96,13 @@
       </ul>
     </div>
       {{#if minMembers santa._id}}
+    <br>
+    <div class="jumbotron">
+    <p class="lead"><strong>Your Crypto Santa can be started.</strong></p>
+    <p>Once you start an Event, no more participants can be added, and no more invitations can be accepted.</p>
+    <p>Once you start, your pariticpants will be notified and given their Onion Wrapping Instructions. Please give everyone a chance to accept your invitiation.</p>
     <p><a class="btn btn-primary btn-lg" href="?start=YES" role="button">Start Crypto Santa!</a></p>
+    </div>
       {{else}}
     <p><div class="btn btn-primary btn-lg disabled" role="button">Need at least 4 accepted participants!</div></p>
       {{/if}}
@@ -103,8 +123,8 @@
 <template name="member">
   {{#if currentUser}}
     {{#if santa.started}}
-      <div class="panel panel-default">
-        <div class="panel-heading"><h3 class="panel-titlte">Onion Wrapping Instructions</h3></div>
+      <div class="panel">
+        <div class="panel-heading"><h2 class="panel-title">Onion Wrapping Instructions</h2></div>
         <div class="panel-body">
         <p>Your Crypto Santa has begin, now is the time to prepare your gift!</p>
         <p>Your gift is for <strong>{{name member.onion.recipient}}</strong>, once your gift is ready, gift wrapped and labeled, you are ready to add the three layers of onion wrapping by following the instructions below</p>
@@ -141,9 +161,9 @@
     {{else}}
   <div class="jumbotron">
     <h2>This Crypto Santa Event Has Not Started</h2>
-    <p>When the organizer starts the event your Onion Wrapping instructions will be diplayed here</p>
+    <p>When the organizer starts the event your Onion Wrapping instructions will be displayed here</p>
+    <p>In the meantime, you can get your gift ready.</p>
   </div>
-  <p>In the meantime, you can get your gift ready for Onion Wrapping. Make sure to have plenty of wrapping paper.</p>
     {{/if}}
   {{else}}
     {{> signup}}
