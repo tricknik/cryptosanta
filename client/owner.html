@@ -44,6 +44,14 @@
         {{/each}}
       </ul>
     </div>
+    <div class="panel">
+      <div class="panel-heading"><h2 class="panel-title">Join Requests</h2></div>
+      <ul class="list-group">
+        {{#each requests}}
+          <a class="list-group-item" href="?approve={{this._id}}"><p class="col-lg-10">{{name this}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Request" _id=this._id}}</a>
+        {{/each}}
+      </ul>
+    </div>
       {{#if minMembers santa._id}}
     <br>
     <div class="jumbotron">

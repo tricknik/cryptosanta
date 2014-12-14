@@ -1,6 +1,21 @@
 Meteor.startup(function () {
   var connectHandler = WebApp.connectHandlers;
   Meteor.methods({
+    onionNames: function (onion) {
+      var getName = function (memberId) {
+        var member = Membership.findOne({_id: memberId});
+        var user = Meteor.users.findOne({_id: member.user});
+        return user.username;
+      };
+      var names = {
+        recipient: getName(onion.recipient),
+        exit: getName(onion.exit),
+        middle: getName(onion.middle),
+        entry: getName(onion.entry)
+      };
+      console.log(names);
+      return names;
+    },
     sendEmail: function (to, from, subject, text) {
       check([to, from, subject, text], [String]);
       this.unblock();
@@ -19,9 +34,6 @@ Meteor.startup(function () {
     },
     removeMemberships: function(santaId) {
       Membership.remove({ santa: santaId });
-    },
-    addRecipient: function(santaId, userId) {
-      Santa.update(santaId, {$push: {recipients: { $each: [userId], $position:0}}});
     },
     startSanta: function(santaId) {
       var recipient = [];

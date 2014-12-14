@@ -1,8 +1,9 @@
 
 Template.go.helpers({
   santaName: function(santaId) {
+    Meteor.subscribe('Santa', santaId);
     var santa = Santa.findOne({_id: santaId});
-    return santa.event; 
+    if (santa) return santa.event; 
   }
 });
 
@@ -17,10 +18,12 @@ Template.owner.helpers({
     return (member.user == undefined) ? 'list-group-item-warning' : 'list-group-item-success';
   },
   name: function(member) {
-    var name = member.email;
-    if (member.user) {
+    var name = 'Karen Eliot';
+    if ((member) && (member.email)) name = member.email;
+    if ((member) && (member.user)) {
       var user = Meteor.users.findOne({_id: member.user });
-      name = user.username + ' <' + member.email + '>'; 
+      if (user) name = user.username; 
+      console.lof(user);
     }
     return name;
   }
@@ -35,20 +38,9 @@ Template.create.helpers({
   }
 });
 
-Template.member.helpers({
-  memberName: function (memberId) {
-    var member = Membership.findOne({_id: memberId});
-    var name = member.email;
-    if (member.user) {
-      var user = Meteor.users.findOne({_id: member.user });
-      name = user.username; 
-    }
-    return name;
-  }
-});
-
 Template.accept.helpers({
   ownerName: function (ownerId) {
+    Meteor.subscribe("User", ownerId);
     var user = Meteor.users.findOne({_id: ownerId});
     return user.username;
   }

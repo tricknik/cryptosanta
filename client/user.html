@@ -9,22 +9,31 @@
 </template>
 
 <template name="santa">
-  {{#if currentUser}}
-    {{#if isOwner santa}}
-      {{> owner}}
-    {{/if}}
+  {{#if isOwner santa}}
+    {{> owner}}
   {{else}}
-    {{> signup}}
+    {{#if santa.public}}
+      <div class="jumbotron">
+      <h1>{{santa.event}}</h1>
+      <p class="lead">{{santa.description}}</p>
+      <p><a class="btn btn-primary btn-lg" href="/join/{{santa._id}}" role="button">Join this Crypto Santa &raquo;</a></p>
+      </div>
+    {{else}}
+      <div class="jumbotron">
+      <p class="lead">This Crypto Santa is not public</p>
+    </div>
+    {{/if}}
   {{/if}}
 </template>
 
 <template name="go">
   {{#if currentUser}}
   <br>
+  <div class="alert alert-info" role="alert"><h2 class="text-center">We're working on it!</h2>Hello! Thanks for using Cryto Santa, please be aware that this software is under active development and, sadly, doesn't work so well with certain versions of Firefox at the moment. If you have trouble, try Chrome.</div>
   <div class="jumbotron">
     <p class="lead">Starting your own <strong>Crypto Santa</strong> is easy, just create an event and invite some pariticpants! Events you have already created, been invited to or are participating in are displayed below</p>
     <p><a class="btn btn-primary btn-lg" href="/create" role="button">Create or manage a Crypto Santa event &raquo;</a></p>
-</div>
+  </div>
   {{#if count santas}}
   <div class="panel">
     <div class="panel-heading"><h2 class="panel-title">Crypto Santa Events You Have Created</h2></div>
@@ -63,7 +72,7 @@
 <template name="accept">
   {{#if currentUser}}
     <div class="jumbotron">
-    <h2>{{santa.event}}</h2>
+    <h1>{{santa.event}}</h1>
     <p>{{santa.description}}</p>
     <p class="lead">You have been invited by {{ownerName santa.owner}}</p>
     <p><a class="btn btn-primary btn-lg" href="?accept=YES" role="button">Accept Invitation!</a></p>
@@ -80,7 +89,7 @@
         <div class="panel-heading"><h2 class="panel-title">Onion Wrapping Instructions</h2></div>
         <div class="panel-body">
         <p>Your Crypto Santa has begin, now is the time to prepare your gift!</p>
-        <p>Your gift is for <strong>{{memberName member.onion.recipient}}</strong>, once your gift is ready, gift wrapped and labeled, you are ready to add the three layers of onion wrapping by following the instructions below</p>
+        <p>Your gift is for <strong>{{name.recipient}}</strong>, once your gift is ready, gift wrapped and labeled, you are ready to add the three layers of onion wrapping by following the instructions below</p>
         <p>While it's nice to use attactive wrapping paper to wrap your gift, it's best to use newspaper or scrap paper for the outer three laywers of wrapping</p>
         <p>Please label each layer clearly</p>
       </div>
@@ -88,26 +97,26 @@
       <div class="list-group-item"> 
         <span class="badge">Your Gift</span>
         <h4 class="list-group-item-heading">Recipient</h4>
-        <strong class="list-group-item-text">{{memberName member.onion.recipient}}</strong>
-        <p class="list-group-item-text">This is the person your gift is for. Wrap your present and label it for {{memberName member.onion.recipient}}</p>
+        <strong class="list-group-item-text">{{name.recipient}}</strong>
+        <p class="list-group-item-text">This is the person your gift is for. Wrap your present and label it for {{name.recipient}}</p>
         </div>
       <div class="list-group-item"> 
         <span class="badge">Layer 1</span>
         <h4 class="list-group-item-heading">Exit</h4>
-        <strong class="list-group-item-text">{{memberName member.onion.exit}}</strong>
-        <p class="list-group-item-text">This is the first layer of your onion wrapping. Re-wrap your wrapped present and label it for {{memberName member.onion.exit}}</p>
+        <strong class="list-group-item-text">{{name.exit}}</strong>
+        <p class="list-group-item-text">This is the first layer of your onion wrapping. Re-wrap your wrapped present and label it for {{name.exit}}</p>
       </div>
       <div class="list-group-item"> 
         <span class="badge">Layer 2</span>
         <h4 class="list-group-item-heading">Middle</h4>
-        <strong class="list-group-item-text">{{memberName member.onion.middle}}</strong>
-        <p class="list-group-item-text">This is the second layer of your onion wrapping. Wrap again and label it for {{memberName member.onion.middle}}</p>
+        <strong class="list-group-item-text">{{name.middle}}</strong>
+        <p class="list-group-item-text">This is the second layer of your onion wrapping. Wrap again and label it for {{name.middle}}</p>
       </div>
       <div class="list-group-item"> 
         <span class="badge">Layer 3</span>
         <h4 class="list-group-item-heading">Entry</h4>
-        <strong class="list-group-item-text">{{memberName member.onion.exit}}</strong>
-        <p class="list-group-item-text">This is final outer layer of your onion wrapping. Label it for {{memberName member.onion.entry}}. This is the person you will give the onion wrapped gift too at your Crypto Santa event. Be discrete.</p>
+        <strong class="list-group-item-text">{{name.exit}}</strong>
+        <p class="list-group-item-text">This is final outer layer of your onion wrapping. Label it for {{name.entry}}. This is the person you will give the onion wrapped gift too at your Crypto Santa event. Be discrete.</p>
       </div>
       </div>
       </div>
@@ -121,5 +130,11 @@
   {{else}}
     {{> signup}}
   {{/if}}
+</template>
+
+<template name="joined">
+  <div class="jumbotron">
+    <h1>Your Request to Join Has Been Sent!</h1>
+  </div>
 </template>
 
