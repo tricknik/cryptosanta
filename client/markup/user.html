@@ -1,11 +1,9 @@
 <template name="start">
-  <div class="starter-template">
   {{#if currentUser}}
-    {{> go}}
+    {{> home}}
   {{else}}
     {{> signup}}
   {{/if}}
-  </div>
 </template>
 
 <template name="santa">
@@ -24,15 +22,6 @@
     </div>
     {{/if}}
   {{/if}}
-</template>
-
-<template name="invite">
-  <div class="jumbotron">
-  <h1>{{invite.event}}</h1>
-  <p>{{invite.description}}</p>
-  <p class="lead">You have been invited by {{invite.name}}</p>
-  <p><a class="btn btn-primary btn-lg" href="/accept/{{invite._id}}" role="button">Accept Invitation!</a></p>
-  </div>
 </template>
 
 <template name="accept">

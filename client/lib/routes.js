@@ -95,9 +95,9 @@ Router.route('/member/:_id', function() {
   var route = this;
   Meteor.call('WrappingDetails', this.params._id, function(err, details) {
     if ((details) && (details.onion)) {
-      route.render('member', {data: {member: details.member, santa: details.santa, name: details.onion}});
+      route.render('instructions', {data: {member: details.member, santa: details.santa, name: details.onion}});
     } else if (details) {
-      route.render('member', {data: {santa: details.santa}});
+      route.render('instructions', {data: {santa: details.santa}});
     }
   });
 });
