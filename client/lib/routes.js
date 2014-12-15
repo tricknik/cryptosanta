@@ -43,7 +43,7 @@ Router.route('/santa/:_id', function() {
       Meteor.call('startSanta', santaId);
     }
     if ((santa) && (route.params.query.approve)) {
-      console.log(route.params.query.approve);
+      // do something
     }
     AutoForm.hooks({
       insertMembershipForm: {

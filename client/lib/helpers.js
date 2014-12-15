@@ -36,7 +36,6 @@ Template.registerHelper('count', function (collection) {
 
 Template.registerHelper('minMembers', function (santaId) {
   var collection = Membership.find({santa: santaId, user: {$gt: ''}});
-  console.log('haha ' + santaId + ' wow ' + collection.count());
   return (collection) ? Math.max(0, collection.count() - 3) : 0;
 });
 

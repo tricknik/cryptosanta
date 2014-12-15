@@ -2,7 +2,6 @@ Meteor.startup(function () {
   var connectHandler = WebApp.connectHandlers;
   Meteor.methods({
     inviteInfo: function (inviteId) {
-console.log(inviteId);
       var invite = Membership.findOne({_id: inviteId});
       var santa = invite && Santa.findOne({_id: invite.santa});
       var user = santa && Meteor.users.findOne({_id: santa.owner});
