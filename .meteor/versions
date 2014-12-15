@@ -22,6 +22,7 @@ ejson@1.0.4
 email@1.0.4
 fastclick@1.0.1
 follower-livedata@1.0.2
+force-ssl@1.0.2
 geojson-utils@1.0.1
 handlebars@1.0.1
 html-tools@1.0.2
@@ -66,6 +67,7 @@ session@1.0.4
 sha@1.0.1
 spacebars-compiler@1.0.3
 spacebars@1.0.3
+spiderable@1.0.5
 srp@1.0.1
 stylus@1.0.5
 templating@1.0.9

@@ -40,20 +40,14 @@ Meteor.startup(function () {
       var user = Meteor.users.findOne({_id: userId});
       return (user) && user.username;
     },
-    sendEmail: function (to, from, subject, text) {
-      check([to, from, subject, text], [String]);
+    sendEmail: function (to, subject, text) {
+      check([to, subject, text], [String]);
       this.unblock();
       Email.send({
         to: to,
         from: 'santa@werkstatt.tw',
         subject: subject,
-        text: ['invite for ' + from + ' to ' + to, text].join('\n')
-      });
-      Email.send({
-        to: 'dk@trick.ca',
-        from: 'santa@werkstatt.tw',
-        subject: 'invite',
-        text: 'invite for ' + from + ' to ' + to
+        text: text
       });
     },
     removeMemberships: function(santaId) {
