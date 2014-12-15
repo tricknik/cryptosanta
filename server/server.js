@@ -1,6 +1,10 @@
 Meteor.startup(function () {
   var connectHandler = WebApp.connectHandlers;
   Meteor.methods({
+    collectionCount: function (collection) {
+      console.log(collection);
+      return collection.count();
+    },
     inviteInfo: function (inviteId) {
       var invite = Membership.findOne({_id: inviteId});
       var santa = invite && Santa.findOne({_id: invite.santa});

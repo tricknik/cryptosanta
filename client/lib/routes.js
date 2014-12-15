@@ -1,5 +1,19 @@
 AutoForm.debug();
 
+Router.configure({
+  waitOn: function() {
+    if (Meteor.userId()) {
+      Tracker.autorun(function() {
+        Meteor.subscribe('MySanta');
+        Meteor.subscribe('MyMembership');
+        Meteor.subscribe('MyInvite');
+        Meteor.subscribe('MyRequest');
+        Meteor.subscribe("SantaDetail", Session.get('santaDetails'));
+      });
+    }
+  }
+});
+
 Router.route('/', function() {
   if (Meteor.userId()) {
     this.redirect('/start');
@@ -130,14 +144,4 @@ Router.route('/join/:_id', function() {
     this.render('signup');
   }
 });
-
-if (Meteor.userId()) {
-  Tracker.autorun(function() {
-    Meteor.subscribe('MySanta');
-    Meteor.subscribe('MyMembership');
-    Meteor.subscribe('MyInvite');
-    Meteor.subscribe('MyRequest');
-    Meteor.subscribe("SantaDetail", Session.get('santaDetails'));
-  });
-}
 
