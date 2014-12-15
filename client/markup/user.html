@@ -1,0 +1,61 @@
+<template name="start">
+  <div class="starter-template">
+  {{#if currentUser}}
+    {{> go}}
+  {{else}}
+    {{> signup}}
+  {{/if}}
+  </div>
+</template>
+
+<template name="santa">
+  {{#if isOwner}}
+    {{> owner}}
+  {{else}}
+    {{#if santa.public}}
+      <div class="jumbotron">
+      <h1>{{santa.event}}</h1>
+      <p class="lead">{{santa.description}}</p>
+      <p><a class="btn btn-primary btn-lg" href="/join/{{santa._id}}" role="button">Join this Crypto Santa &raquo;</a></p>
+      </div>
+    {{else}}
+      <div class="jumbotron">
+      <p class="lead">This Crypto Santa is not public</p>
+    </div>
+    {{/if}}
+  {{/if}}
+</template>
+
+<template name="invite">
+  <div class="jumbotron">
+  <h1>{{invite.event}}</h1>
+  <p>{{invite.description}}</p>
+  <p class="lead">You have been invited by {{invite.name}}</p>
+  <p><a class="btn btn-primary btn-lg" href="/accept/{{invite._id}}" role="button">Accept Invitation!</a></p>
+  </div>
+</template>
+
+<template name="accept">
+  {{#if currentUser}}
+    <div class="jumbotron">
+      <h1>Welcome!</h1>
+      <h2>You have joined {{invite.event}}!</h2>
+      <p class="lead">{{invite.name}} will be pleased!</p>
+      <p><a class="btn btn-primary btn-lg" href="/start"
+role="button">Get Started &raquo;</a></p>
+    </div>
+  {{else}}
+    {{> signup}}
+  {{/if}}
+</template>
+
+<template name="joined">
+  {{#if currentUser}}
+    <div class="jumbotron">
+      <h1>Your Request to Join Has Been Sent!</h1>
+    </div>
+  {{else}}
+    {{> signup}}
+  {{/if}}
+</template>
+

@@ -1,6 +1,25 @@
 Meteor.startup(function () {
   var connectHandler = WebApp.connectHandlers;
   Meteor.methods({
+    inviteInfo: function (inviteId) {
+console.log(inviteId);
+      var invite = Membership.findOne({_id: inviteId});
+      var santa = invite && Santa.findOne({_id: invite.santa});
+      var user = santa && Meteor.users.findOne({_id: santa.owner});
+      return user && {
+        _id: (invite._id),
+        event: santa.event,
+        description: santa.description,
+        started: santa.started,
+        name: user.username
+      };
+    },
+    claimInvite: function(inviteId) {
+      var invite = Membership.findOne({_id: inviteId});
+      if ((invite) && (invite.user == undefined)) {
+        Membership.update(invite, {$set: {user: Meteor.userId()}});
+      }
+    },
     santaInfo: function (santaId) {
       var santa = Santa.findOne({_id: santaId});
       var user = santa && Meteor.users.findOne({_id: santa.owner});

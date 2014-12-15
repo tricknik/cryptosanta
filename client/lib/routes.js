@@ -73,24 +73,22 @@ Router.route('/santa/:_id', function() {
 });
 
 Router.route('/invite/:_id', function() {
+  var route = this;
+  Meteor.call('inviteInfo', route.params._id, function(err, invite) {
+    route.render('invite', {data: {invite: invite}});
+  });
+});
+
+Router.route('/accept/:_id', function() {
+  var route = this;
   if (Meteor.userId()) {
-    var invite = Membership.findOne({_id: this.params._id});
-    var accepted = false;
-    if ((invite) && (invite.user == undefined) && (this.params.query.accept == "YES")) {
-      Membership.update(this.params._id, {$set: {user: Meteor.userId()}});
-      accepted = true;
-    }
-    if (accepted) {
-      this.redirect('/start/');
-    } else {
-      var route = this;
-      Meteor.call('santaInfo', invite.santa, function(err, santa) {
-        route.render('accept', {data: {santa: santa}});
-      });
-    }
+    Meteor.call('claimInvite', route.params._id);
+    Meteor.call('inviteInfo', route.params._id, function(err, invite) {
+      route.render('accept', {data: {invite: invite}});
+    });
   } else {
     this.render('signup');
-  }
+  }  
 });
 
 Router.route('/member/:_id', function() {
@@ -130,11 +128,13 @@ Router.route('/join/:_id', function() {
   }
 });
 
-Tracker.autorun(function() {
-  Meteor.subscribe('MySanta');
-  Meteor.subscribe('MyMembership');
-  Meteor.subscribe('MyInvite');
-  Meteor.subscribe('MyRequest');
-  Meteor.subscribe("SantaDetail", Session.get('santaDetails'));
-});
+if (Meteor.userId()) {
+  Tracker.autorun(function() {
+    Meteor.subscribe('MySanta');
+    Meteor.subscribe('MyMembership');
+    Meteor.subscribe('MyInvite');
+    Meteor.subscribe('MyRequest');
+    Meteor.subscribe("SantaDetail", Session.get('santaDetails'));
+  });
+}
 
