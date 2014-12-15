@@ -35,18 +35,20 @@ Router.route('/create', function() {
 });
 
 Router.route('/santa/:_id', function() {
+  var route = this;
   var santaId = this.params._id;
-  Meteor.subscribe("Santa", santaId);
-  var santa = Santa.findOne({_id: santaId});
-  if ((santa) && (Meteor.userId() == santa.owner)) {
+  var santaOwner = function(santaInfo) {
+    Meteor.subscribe("MySanta");
+    var santa = Santa.findOne({_id: santaId});
+console.log(Meteor.userId());
     Meteor.subscribe("SantaDetail", santaId);
     var members = Membership.find({santa: santaId});
     var requests = Request.find({santa: santaId});
-    if ((santa) && (santa.started != true) && (this.params.query.start == "YES")) {
+    if ((santa) && (santa.started != true) && (route.params.query.start == "YES")) {
       Meteor.call('startSanta', santaId);
     }
-    if ((santa) && (this.params.query.approve)) {
-      console.log(this.params.query.approve);
+    if ((santa) && (route.params.query.approve)) {
+      console.log(route.params.query.approve);
     }
     AutoForm.hooks({
       insertMembershipForm: {
@@ -64,17 +66,21 @@ Router.route('/santa/:_id', function() {
         }
       }
     });
-    this.render('santa', {data: {santa: santa, members: members, requests: requests}});
-  } else {
-    this.render('santa', {data: {santa: santa}});
-  }
+    route.render('santa', {data: {santa: santa, members: members, requests: requests, isOwner: santaInfo.owner}});
+  };
+  Meteor.call('santaInfo', santaId, function(err, santaInfo) {
+    if (santaInfo && santaInfo.owner) {
+      santaOwner(santaInfo);
+    } else {
+      route.render('santa', {data: {santa: santaInfo, isOwner: santaInfo.owner}});
+    }
+  });
 });
 
 Router.route('/invite/:_id', function() {
   if (Meteor.userId()) {
-    Meteor.subscribe("Membership", this.params._id);
+    Meteor.subscribe("MyInvite");
     var invite = Membership.findOne({_id: this.params._id});
-    Meteor.subscribe("Santa", invite.santa)
     var accepted = false;
     if ((invite) && (invite.user == undefined) && (this.params.query.accept == "YES")) {
       Membership.update(this.params._id, {$set: {user: Meteor.userId()}});
@@ -83,8 +89,10 @@ Router.route('/invite/:_id', function() {
     if (accepted) {
       this.redirect('/start/');
     } else {
-      var santa = (invite) ? Santa.findOne({_id: invite.santa}) : {};
-      this.render('accept', {data: {santa: santa}});
+      var route = this;
+      Meteor.call('santaInfo', invite.santa, function(err, santa) {
+        route.render('accept', {data: {santa: santa}});
+      });
     }
   } else {
     this.render('signup');
@@ -92,42 +100,49 @@ Router.route('/invite/:_id', function() {
 });
 
 Router.route('/member/:_id', function() {
-  Meteor.subscribe("Membership", this.params._id);
-  var member = Membership.findOne({_id: this.params._id});
-  if ((member) && (member.onion)) {
-    Meteor.subscribe("Santa", member.santa);
-    var santa = (member) ? Santa.findOne({_id: member.santa}) : {};
-    var route = this;
-    Meteor.call('onionNames', member.onion, function(error, onion) {
-      route.render('member', {data: {member: member, santa: santa, name: onion}});
-    });
-  } else {
-    this.render('member', {data: {member: member}});
-  }
+  var route = this;
+  Meteor.call('WrappingDetails', this.params._id, function(err, details) {
+    if ((details) && (details.onion)) {
+      route.render('member', {data: {member: details.member, santa: details.santa, name: details.onion}});
+    } else if (details) {
+      route.render('member', {data: {santa: details.santa}});
+    }
+  });
 });
 
 Router.route('/join/:_id', function() {
   if (Meteor.userId()) {
-    Meteor.subscribe("Santa", this.params._id);
-    santa = Santa.findOne({_id: this.params._id});
-    if ((santa) && (santa.public)) {
-      Meteor.subscribe("MyMembership");
-      var member = Membership.findOne({user: Meteor.userId(), santa: santa._id});
-      Meteor.subscribe("MyMembership");
-      var member = Membership.findOne({user: Meteor.userId(), santa: santa._id});
-      if (member) {
-        Request.remove({santa: santa._id, user: Meteor.userId()});
-      } else {
-        Meteor.subscribe("MyRequest");
-        var request = Request.findOne({user: Meteor.userId(), santa: santa._id});
-        if (!request) {
-          Request.insert({santa: santa._id, user: Meteor.userId()});
+    var route = this;
+    var join = function(santa) {
+      if ((santa) && (santa.public)) {
+        Meteor.subscribe("MyMembership");
+        var member = Membership.findOne({user: Meteor.userId(), santa: santa._id});
+        Meteor.subscribe("MyMembership");
+        var member = Membership.findOne({user: Meteor.userId(), santa: santa._id});
+        if (member) {
+          Request.remove({santa: santa._id, user: Meteor.userId()});
+        } else {
+          Meteor.subscribe("MyRequest");
+          var request = Request.findOne({user: Meteor.userId(), santa: santa._id});
+          if (!request) {
+            Request.insert({santa: santa._id, user: Meteor.userId()});
+          }
         }
       }
-    } 
-    this.render('joined');
+      route.render('joined');
+    };
+    Meteor.call('santaInfo', this.params._id, function(err, santa) {
+      join(santa);
+    });
   } else {
     this.render('signup');
   }
+});
+
+Tracker.autorun(function() {
+  Meteor.subscribe('MySanta');
+  Meteor.subscribe('MyMembership');
+  Meteor.subscribe('MyInvite');
+  Meteor.subscribe('MyRequest');
 });
 

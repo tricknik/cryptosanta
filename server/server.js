@@ -1,20 +1,26 @@
 Meteor.startup(function () {
   var connectHandler = WebApp.connectHandlers;
   Meteor.methods({
-    onionNames: function (onion) {
-      var getName = function (memberId) {
-        var member = Membership.findOne({_id: memberId});
-        var user = Meteor.users.findOne({_id: member.user});
-        return user.username;
+    santaInfo: function (santaId) {
+      var santa = Santa.findOne({_id: santaId});
+      var user = santa && Meteor.users.findOne({_id: santa.owner});
+      return (santa) && {
+        _id: (santa._id),
+        event: santa.event,
+        description: santa.description,
+        public: santa.public,
+        started: santa.started,
+        name: user.username,
+        owner: (santa.owner == Meteor.userId())
       };
-      var names = {
-        recipient: getName(onion.recipient),
-        exit: getName(onion.exit),
-        middle: getName(onion.middle),
-        entry: getName(onion.entry)
-      };
-      console.log(names);
-      return names;
+    },
+    santaName: function (santaId) {
+      var santa = Santa.findOne({_id: santaId});
+      return (santa) && santa.event;
+    },
+    userName: function (userId) {
+      var user = Meteor.users.findOne({_id: userId});
+      return (user) && user.username;
     },
     sendEmail: function (to, from, subject, text) {
       check([to, from, subject, text], [String]);
@@ -83,6 +89,28 @@ Meteor.startup(function () {
         Membership.update(member._id, {$set: {onion: onions[member._id]}});
       }); 
       Santa.update(santaId, {$set: {started: true}});
+    },
+    WrappingDetails: function (memberId) {
+      var member = Membership.findOne({_id: memberId});
+      var santa = Santa.findOne({_id: member.santa});
+      var details = {
+        member: {},
+        santa: {event: santa.event, description: santa.description, started: santa.started}
+      };
+      if (member.onion) {
+        var getName = function (memberId) {
+          var member = Membership.findOne({_id: memberId});
+          var user = Meteor.users.findOne({_id: member.user});
+          return user.username;
+        };
+        details.onion = {
+          recipient: getName(member.onion.recipient),
+          exit: getName(member.onion.exit),
+          middle: getName(member.onion.middle),
+          entry: getName(member.onion.entry)
+        };
+      }
+      return details;
     }
   });
 });

@@ -23,7 +23,7 @@
   {{#if currentUser}}
     {{#if santa.started}}
       <div class="jumbotron">
-        <h2>Crypto Santa Started</h2>
+        <h2>{{santa.event}} Started</h2>
         <p class="lead"><strong>This event has already been started</strong></p>
         <p>Everyone can see their onion wrapping instructions. No more people can be added. Have fun!</p>
       </div>
@@ -40,15 +40,15 @@
       <div class="panel-heading"><h2 class="panel-title">Manage Participants</h2></div>
       <ul class="list-group">
         {{#each members}}
-          <div class="list-group-item {{accepted this}}"><p class="col-lg-10">{{name this}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
+          <div class="list-group-item {{accepted this}}"><p class="col-lg-10">{{userName this.user this.email}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Membership" _id=this._id}}</div>
         {{/each}}
       </ul>
     </div>
     <div class="panel">
-      <div class="panel-heading"><h2 class="panel-title">Join Requests</h2></div>
+      <div class="panel-heading"><h2 class="panel-title">Approve Join Requests</h2></div>
       <ul class="list-group">
         {{#each requests}}
-          <a class="list-group-item" href="?approve={{this._id}}"><p class="col-lg-10">{{name this}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Request" _id=this._id}}</a>
+          <a class="list-group-item" href="?approve={{this._id}}"><p class="col-lg-10">{{userName this.user}}</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Request" _id=this._id}}</a>
         {{/each}}
       </ul>
     </div>
