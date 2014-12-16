@@ -4,11 +4,11 @@ Router.configure({
   waitOn: function() {
     if (Meteor.userId()) {
       Tracker.autorun(function() {
-        Meteor.subscribe('MySanta');
         Meteor.subscribe('MyMembership');
         Meteor.subscribe('MyInvite');
         Meteor.subscribe('MyRequest');
-        Meteor.subscribe("SantaDetail", Session.get('santaDetails'));
+        Meteor.subscribe('MySanta');
+        Meteor.subscribe("MySantaDetail", Session.get('santaDetails'));
       });
     }
   }
@@ -45,48 +45,48 @@ Router.route('/create', function() {
 });
 
 Router.route('/santa/:_id', function() {
-  Session.set('santaDetails', this.params._id);
-  var route = this;
   var santaId = this.params._id;
-  var santaOwner = function(santaInfo) {
-    var santa = Santa.findOne({_id: santaId});
-    //Meteor.subscribe("SantaDetail", santaId);
-    var members = Membership.find({santa: santaId});
-    var requests = Request.find({santa: santaId});
-    if ((santa) && (santa.started != true) && (route.params.query.start == "YES")) {
-      Meteor.call('startSanta', santaId);
-    }
-    if ((santa) && (route.params.query.approve)) {
-      // do something
-    }
-    AutoForm.hooks({
-      insertMembershipForm: {
-        formToDoc: function(doc) {
-          doc.santa = santaId;
-          return doc;
-        },
-        onSuccess: function(operation, result, template) {
-          var santa = Santa.findOne({_id: santaId});
-          var member = Membership.findOne({_id: result});
-          var owner = Meteor.user();
-          var ownerEmail = owner.emails[0].address;
-          Meteor.call('sendEmail', member.email, 
-            'Invitation to Crypto Santa from ' + owner.username + '!',
-            ["You've been invited to " + santa.event + " by " + owner.username + "!",
-            santa.description,
-            Meteor.absoluteUrl('invite/' + member._id, {secure:true})].join("\n\n"));
-        }
-      }
-    });
-    route.render('santa', {data: {santa: santa, members: members, requests: requests, isOwner: santaInfo.owner}});
-  };
+  var route = this;
   Meteor.call('santaInfo', santaId, function(err, santaInfo) {
-    if (santaInfo && santaInfo.owner) {
-      santaOwner(santaInfo);
-    } else {
-      route.render('santa', {data: {santa: santaInfo, isOwner: santaInfo.owner}});
+    route.render('santa', {data: {santaInfo: santaInfo}});
+  });
+});
+
+Router.route('/manage/:_id', function() {
+  Session.set('santaDetails', this.params._id);
+  var santaId = this.params._id;
+  var santa = Santa.findOne({_id: santaId});
+  var members = Membership.find({santa: santaId});
+  var requests = Request.find({santa: santaId});
+  if ((santa) && (santa.started != true) && (this.params.query.start == "YES")) {
+    Meteor.call('startSanta', santaId);
+  }
+  if ((santa) && (santa.started != true) && (this.params.query.approve)) {
+    Meteor.call('approveRequest', this.params.query.approve);
+  }
+  var owner = Meteor.user();
+  var ownerEmail = owner && owner.emails[0].address;
+  AutoForm.hooks({
+    insertMembershipForm: {
+      formToDoc: function(doc) {
+        doc.santa = santaId;
+        if (doc.email == ownerEmail) {
+          doc.user = Meteor.userId();
+        }
+        return doc;
+      },
+      onSuccess: function(operation, result, template) {
+        var santa = Santa.findOne({_id: santaId});
+        var member = Membership.findOne({_id: result});
+        Meteor.call('sendEmail', member.email, 
+          'Invitation to Crypto Santa from ' + owner.username + '!',
+          ["You've been invited to " + santa.event + " by " + owner.username + "!",
+          santa.description,
+          Meteor.absoluteUrl('invite/' + member._id, {secure:true})].join("\n\n"));
+      }
     }
   });
+  this.render('manage', {data: {santa: santa, members: members, requests: requests, url: Meteor.absoluteUrl()}});
 });
 
 Router.route('/invite/:_id', function() {
@@ -125,10 +125,7 @@ Router.route('/join/:_id', function() {
     var join = function(santa) {
       if ((santa) && (santa.public)) {
         var member = Membership.findOne({user: Meteor.userId(), santa: santa._id});
-        var member = Membership.findOne({user: Meteor.userId(), santa: santa._id});
-        if (member) {
-          Request.remove({santa: santa._id, user: Meteor.userId()});
-        } else {
+        if (!member) {
           var request = Request.findOne({user: Meteor.userId(), santa: santa._id});
           if (!request) {
             Request.insert({santa: santa._id, user: Meteor.userId()});

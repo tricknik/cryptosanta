@@ -4,7 +4,7 @@
       <div class="panel-heading"><h2 class="panel-title">Create Crypto Santa Events</h2></div>
     </div>
     {{> quickForm collection="Santa" fields="event, description, public" id="insertSantaForm" type="insert"}}
-    {{#if santas}}
+    {{#if count santas}}
       <div class="panel">
         <div class="panel-heading"><h2 class="panel-title">Crypto Santa Events You Have Created</h2></div>
         <div class="list-group">
@@ -19,12 +19,12 @@
   {{/if}}
 </template>
 
-<template name="owner">
+<template name="manage">
   {{#if currentUser}}
     {{#if santa.started}}
       <div class="jumbotron">
         <h2>{{santa.event}} Started</h2>
-        <p class="lead"><strong>This event has already been started</strong></p>
+        <p class="lead"><strong>This event has been started</strong></p>
         <p>Everyone can see their onion wrapping instructions. No more people can be added. Have fun!</p>
       </div>
     {{else}}
@@ -32,6 +32,14 @@
         <div class="panel-heading"><h2 class="panel-title">Manage Your Crypto Santa</h2></div>
       </div>
       {{> quickForm collection="Santa" fields="event, description, public" doc=this.santa id="updateSantaForm" type="update"}}
+      <div class="panel">
+        <div class="panel-body text-center">
+          <div class="panel-heading"><h2 class="panel-title">Public Url</h2></div>
+          <p>If this Crypto Santa is public, you can share this
+          URL and people can request to join.</p>
+          <pre><a href="{{url}}santa/{{santa._id}}">{{url}}santa/{{santa._id}}</a></pre>
+        </div>
+      </div>
       <div class="panel">
         <div class="panel-heading"><h2 class="panel-title">Invite New Participants</h2></div>
       </div>
@@ -76,7 +84,7 @@
         </div>
       {{else}}
          <br>
-        <p><div class="btn btn-primary btn-lg disabled" role="button">Need at least 4 accepted participants to start!</div></p>
+        <p><div class="btn btn-primary btn-lg disabled" role="button">Need at least 5 accepted participants to start!</div></p>
       {{/if}}
     {{/if}}
   {{else}}

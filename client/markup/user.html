@@ -7,20 +7,16 @@
 </template>
 
 <template name="santa">
-  {{#if isOwner}}
-    {{> owner}}
+  {{#if santaInfo.public}}
+    <div class="jumbotron">
+      <h1>{{santaInfo.event}}</h1>
+      <p class="lead">{{santaInfo.description}}</p>
+      <p><a class="btn btn-primary btn-lg" href="/join/{{santaInfo._id}}" role="button">Join this Crypto Santa &raquo;</a></p>
+    </div>
   {{else}}
-    {{#if santa.public}}
-      <div class="jumbotron">
-      <h1>{{santa.event}}</h1>
-      <p class="lead">{{santa.description}}</p>
-      <p><a class="btn btn-primary btn-lg" href="/join/{{santa._id}}" role="button">Join this Crypto Santa &raquo;</a></p>
-      </div>
-    {{else}}
-      <div class="jumbotron">
+    <div class="jumbotron">
       <p class="lead">This Crypto Santa is not public</p>
     </div>
-    {{/if}}
   {{/if}}
 </template>
 

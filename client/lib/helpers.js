@@ -1,5 +1,5 @@
 
-Template.owner.helpers({
+Template.manage.helpers({
   accepted: function(member) {
     return (member.user == undefined) ? 'list-group-item-warning' : 'list-group-item-success';
   }
@@ -36,7 +36,7 @@ Template.registerHelper('count', function (collection) {
 
 Template.registerHelper('minMembers', function (santaId) {
   var collection = Membership.find({santa: santaId, user: {$gt: ''}});
-  return (collection) ? Math.max(0, collection.count() - 3) : 0;
+  return (collection) ? Math.max(0, collection.count() - 4) : 0;
 });
 
 Accounts.ui.config({passwordSignupFields: 'USERNAME_AND_EMAIL'});

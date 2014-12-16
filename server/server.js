@@ -1,10 +1,6 @@
 Meteor.startup(function () {
   var connectHandler = WebApp.connectHandlers;
   Meteor.methods({
-    collectionCount: function (collection) {
-      console.log(collection);
-      return collection.count();
-    },
     inviteInfo: function (inviteId) {
       var invite = Membership.findOne({_id: inviteId});
       var santa = invite && Santa.findOne({_id: invite.santa});
@@ -17,10 +13,30 @@ Meteor.startup(function () {
         name: user.username
       };
     },
+    approveRequest: function(requestId) {
+      var request = Request.findOne({_id: requestId});
+      var santa = Santa.findOne({_id: request.santa});
+      if (santa.owner == Meteor.userId()) {
+        var user = Meteor.users.findOne({_id: request.user});
+        var invite = Membership.findOne({santa: santa._id, email: user.emails[0].address});
+        if (!invite) {
+          Membership.insert({
+            email: user.emails[0].address,
+            user: user._id,
+            santa: santa._id
+          });
+        }
+        Request.remove({_id: request._id});
+      }
+    },
     claimInvite: function(inviteId) {
       var invite = Membership.findOne({_id: inviteId});
+      var user = Meteor.users.findOne({_id: Meteor.userId()});
       if ((invite) && (invite.user == undefined)) {
-        Membership.update(invite, {$set: {user: Meteor.userId()}});
+        Membership.update(invite, {$set: {
+          user: Meteor.userId(),
+          email: user.emails[0].address,
+        }});
       }
     },
     santaInfo: function (santaId) {
@@ -38,11 +54,11 @@ Meteor.startup(function () {
     },
     santaName: function (santaId) {
       var santa = Santa.findOne({_id: santaId});
-      return (santa) && santa.event;
+      return santa && santa.event;
     },
     userName: function (userId) {
       var user = Meteor.users.findOne({_id: userId});
-      return (user) && user.username;
+      return user && user.username;
     },
     sendEmail: function (to, subject, text) {
       check([to, subject, text], [String]);
@@ -58,49 +74,38 @@ Meteor.startup(function () {
       Membership.remove({ santa: santaId });
     },
     startSanta: function(santaId) {
-      var recipient = [];
-      var lists = {
-        recipient: [],
-        entry: [],
-        middle: [],
-        exit: [],
-        extra: []
-      }
-      var onions = {};
+      var list = {
+        member: []
+      };
       members = Membership.find({santa: santaId, user: {$gt: ''}});
       members.forEach(function(member) {
-        onions[member._id] = {};
-        lists.recipient.push(member._id);
-        lists.exit.push(member._id);
-        lists.middle.push(member._id);
-        lists.entry.push(member._id);
-        lists.extra.push(member._id);
+        list.member.push(member._id);
       }); 
-      var setNode = function(key, not) {
-        lists[key] = _.shuffle(lists[key]);
-        memberlist = lists[key].slice();
-        if (not) { 
-          lists[key] = _.shuffle(lists.extra).concat(lists[key]);
-        }
-        var getNext = function(memberId) {
-          var next = lists[key].pop();
-          while ((memberId == next) || ((not) && (onions[memberId][not] == next))) {
-            var u = next;
-            next = lists[key].pop();
-            lists[key].unshift(u);
-          }
-          return next;
-        };
-        for (var i = memberlist.length; i > 0; i--) {
-          var id = memberlist[i -1];
-          var next = getNext(id);
-          onions[id][key] = next;
+      var rotate = function(list, slots) {
+        for (var i=0; i<slots; i++) {
+          list.unshift(list.pop());
         }
       };
-      setNode('recipient');
-      setNode('exit', 'recipient');
-      setNode('middle', 'exit');
-      setNode('entry', 'middle');
+      list.member = _.shuffle(list.member);
+      list.recipient = list.member.slice(0);
+      list.x = list.member.slice(0);
+      list.y = list.member.slice(0);
+      list.z = list.member.slice(0);
+      rotate(list.recipient, 1);
+      rotate(list.x, 2);
+      rotate(list.y, 3);
+      rotate(list.z, 4);
+      var onions = {};
+      for (var i = list.member.length; i > 0; i--) {
+        var key = i-1;
+        var relay = _.shuffle([list.x[key], list.y[key], list.z[key]]);
+        onions[list.member[key]] = {
+          recipient: list.recipient[key],
+          exit: relay[0],
+          middle: relay[1],
+          entry: relay[2]
+        };
+      }
       members.forEach(function(member) {
         Membership.update(member._id, {$set: {onion: onions[member._id]}});
       }); 

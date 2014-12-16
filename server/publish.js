@@ -1,4 +1,3 @@
-
 /* private */
 
 Meteor.publish("MySanta", function () {
@@ -36,7 +35,7 @@ Meteor.publish("MyInvite", function () {
   }
 });
 
-Meteor.publish("SantaDetail", function (santaId) {
+Meteor.publish("MySantaDetail", function (santaId) {
   if ((santaId) && (this.userId)) {
     var santa = Santa.findOne({_id: santaId});
     if ((santa) && (santa.owner == this.userId)) {
