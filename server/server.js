@@ -15,7 +15,7 @@ Meteor.startup(function () {
     },
     approveRequest: function(requestId) {
       var request = Request.findOne({_id: requestId});
-      var santa = Santa.findOne({_id: request.santa});
+      var santa = request && Santa.findOne({_id: request.santa});
       if (santa.owner == Meteor.userId()) {
         var user = Meteor.users.findOne({_id: request.user});
         var invite = Membership.findOne({santa: santa._id, email: user.emails[0].address});
@@ -72,6 +72,7 @@ Meteor.startup(function () {
     },
     removeMemberships: function(santaId) {
       Membership.remove({ santa: santaId });
+      Request.remove({ santa: santaId });
     },
     startSanta: function(santaId) {
       var list = {

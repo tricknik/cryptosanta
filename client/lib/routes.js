@@ -76,13 +76,23 @@ Router.route('/manage/:_id', function() {
         return doc;
       },
       onSuccess: function(operation, result, template) {
-        var santa = Santa.findOne({_id: santaId});
-        var member = Membership.findOne({_id: result});
-        Meteor.call('sendEmail', member.email, 
-          'Invitation to Crypto Santa from ' + owner.username + '!',
-          ["You've been invited to " + santa.event + " by " + owner.username + "!",
-          santa.description,
-          Meteor.absoluteUrl('invite/' + member._id, {secure:true})].join("\n\n"));
+        var key = 'inviteEmail:' + result;
+        var value = Session.get(key);
+        if (value != result) {
+          var santa = Santa.findOne({_id: santaId});
+          var member = Membership.findOne({_id: result});
+          var owner = Meteor.user();
+          var ownerEmail = owner && owner.emails[0].address;
+          if (member.email != ownerEmail) {
+            Meteor.call('sendEmail', member.email, 
+              'Invitation to Crypto Santa from ' + owner.username + '!',
+              ["You've been invited to " + santa.event + " by " + owner.username + "!",
+              santa.description,
+              Meteor.absoluteUrl('invite/' + member._id, {secure:true})].join("\n\n")
+            );
+          }
+          Session.set(key, result);
+        }
       }
     }
   });

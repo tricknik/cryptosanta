@@ -9,7 +9,11 @@
         <div class="panel-heading"><h2 class="panel-title">Crypto Santa Events You Have Created</h2></div>
         <div class="list-group">
           {{#each santas}}
-            <a href="/santa/{{_id}}" class="list-group-item"><span class="col-lg-10">{{event}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{> quickRemoveButton collection="Santa" _id=this._id beforeRemove=beforeRemove}}</a>
+            <div class="list-group-item">
+              <a href="/manage/{{this._id}}" class="col-lg-10">{{event}}</a>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {{> quickRemoveButton collection="Santa" _id=this._id beforeRemove=beforeRemove}}
+            </div>
           {{/each}}
         </div>
       </div>
