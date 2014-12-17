@@ -16,7 +16,7 @@ Meteor.startup(function () {
     approveRequest: function(requestId) {
       var request = Request.findOne({_id: requestId});
       var santa = request && Santa.findOne({_id: request.santa});
-      if (santa.owner == Meteor.userId()) {
+      if ((santa) && (santa.owner == Meteor.userId())) {
         var user = Meteor.users.findOne({_id: request.user});
         var invite = Membership.findOne({santa: santa._id, email: user.emails[0].address});
         if (!invite) {

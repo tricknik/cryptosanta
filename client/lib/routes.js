@@ -18,7 +18,7 @@ Router.route('/', function() {
   if (Meteor.userId()) {
     this.redirect('/start');
   } else {
-    this.render('hello');
+    this.render('/hello');
   }
 });
 
